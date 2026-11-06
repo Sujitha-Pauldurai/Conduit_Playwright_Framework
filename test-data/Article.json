@@ -1,0 +1,67 @@
+{
+    "TC003_new": {
+        "title": "Playwright Automation Testing_1793994186007",
+        "description": "Learning API and UI automation",
+        "body": "Building a reusable Playwright framework using TypeScript.",
+        "tagList": [
+            "playwright",
+            "automation"
+        ]
+    },
+    "TC003_update": {
+        "newTitle": "Updated Playwright Automation Testing_1793994188703",
+        "description": "Updated article using API automation",
+        "body": "Testing article updates using Playwright and Postman.",
+        "addTags": [
+            "api"
+        ],
+        "removeTags": [
+            "automation"
+        ]
+    },
+    "TC004_new": {
+        "title": "Future of AI in Software Testing_1793998362891",
+        "description": "How AI is transforming modern QA practices",
+        "body": "AI-powered testing helps improve test coverage, reduce repetitive tasks, and identify defects faster. Automation engineers can use AI to build more reliable testing strategies.",
+        "tagList": [
+            "AI",
+            "QA",
+            "testing"
+        ]
+    },
+    "TC005_title": "AI-Driven Quality Engineering_1793988635266",
+    "TC005_update": {
+        "newTitle": "AI-Driven Quality Engineering_1793991668956",
+        "body": "Artificial intelligence is transforming quality engineering by enabling smarter test case generation, intelligent defect detection, and faster regression testing. Combining AI with Playwright automation helps QA engineers improve efficiency, maintainability, and overall test coverage.",
+        "addTags": [
+            "QualityEngineering",
+            "AI_Automation"
+        ],
+        "removeTags": [
+            "testing"
+        ]
+    },
+    "TC006_title": "Future of AI in Software Testing_1793991688803",
+    "API_TC01": {
+        "article": {
+            "title": "Building Scalable API Automation Frameworks9",
+            "description": "Best practices for reliable and maintainable API testing",
+            "body": "A well-designed API automation framework improves test coverage, reduces regression effort, and ensures consistent application behavior. Using reusable methods, data-driven testing, and proper response validation helps QA engineers build scalable automation solutions.",
+            "tagList": [
+                "API",
+                "Automation",
+                "QualityAssurance"
+            ]
+        }
+    },
+    "API_TC01_PUT": {
+        "article": {
+            "title": " Update - Building Scalable API Automation Frameworks9",
+            "body": "A well-designed API automation framework improves test coverage, reduces regression effort, and ensures consistent application behavior. Using reusable methods, data-driven testing, and proper response validation helps QA engineers build scalable automation solutions.",
+            "tagList": [
+                "API",
+                "QualityAssurance"
+            ]
+        }
+    }
+}
