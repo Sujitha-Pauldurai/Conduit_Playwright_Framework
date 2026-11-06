@@ -29,9 +29,10 @@ jobs:
         USERNAME3: ${{ secrets.USERNAME3 }}
         EMAIL3: ${{ secrets.EMAIL3 }}
         PASSWORD3: ${{ secrets.PASSWORD3 }}
-        apiUsername: ${{ secrets.apiUsername }}
-        apiEmail: ${{ secrets.apiEmail }}
-        apiPassword: ${{ secrets.apiPassword }}
+        apiUsername: ${{ secrets.APIUSERNAME }}
+        apiEmail: ${{ secrets.APIEMAIL }}
+        apiPassword: ${{ secrets.APIPASSWORD }}
+        baseUrl: ${{secrets.BASEURL}}
     - uses: actions/upload-artifact@v4
       if: always()
       with:
