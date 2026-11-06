@@ -19,9 +19,29 @@ jobs:
       run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npx playwright test
+      env:
+        USERNAME1: ${{ secrets.USERNAME1 }}
+        EMAIL1: ${{ secrets.EMAIL1 }}
+        PASSWORD1: ${{ secrets.PASSWORD1 }}
+        USERNAME2: ${{ secrets.USERNAME2 }}
+        EMAIL2: ${{ secrets.EMAIL2 }}
+        PASSWORD2: ${{ secrets.PASSWORD2 }}
+        USERNAME3: ${{ secrets.USERNAME3 }}
+        EMAIL3: ${{ secrets.EMAIL3 }}
+        PASSWORD3: ${{ secrets.PASSWORD3 }}
+        apiUsername: ${{ secrets.apiUsername }}
+        apiEmail: ${{ secrets.apiEmail }}
+        apiPassword: ${{ secrets.apiPassword }}
     - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
+      if: always()
       with:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+    - name: Upload Playwright Trace
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-trace
+        path: test-results/
+        retention-days: 7
