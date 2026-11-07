@@ -42,6 +42,10 @@ export default class ElementHandler{
         await expect(this.page).toHaveURL(/\/article\/.+/);
 
     }
+
+    async returnPageURL(){
+        return this.page.url()
+    }
     
     /**
          * Description: Locates an element using the specified locator strategy and clicks it after verifying visibility.

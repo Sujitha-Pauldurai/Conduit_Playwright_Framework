@@ -5,6 +5,7 @@ export const articleLocators = {
     
     //Page
     articlePage: '.article-page',
+    heading: '.article-page h1',
 
     // Article form
     titleName: 'Article Title',

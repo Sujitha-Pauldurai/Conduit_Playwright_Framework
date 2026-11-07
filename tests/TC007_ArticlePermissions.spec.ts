@@ -5,12 +5,16 @@ import { HomePage } from "../pages/HomePage"
 import { SignInPage } from "../pages/SignInPage"
 
 import data from "../test-data/Article.json"
-import {updateValue} from "../helper/jsonFileHandler"
+import { updateUniqueTitle } from "../helper/jsonFileHandler"
+
+// Store the article title and slug to share article details across test cases.
 let uniqueTitle = data.TC004_new.title
 let articleSlug:string
+
+// Execute tests sequentially because the permission tests depend on the article created by User A.
 test.describe.serial("Execute the test in serial mode",async()=>{
 
-
+// Clean up the article created during the test execution.
 test.afterAll("Delete the created article",async({apiRequest,fileReader})=>{
 
     const username =   fileReader.readData("users", "USERNAME1")
@@ -41,6 +45,7 @@ test.afterAll("Delete the created article",async({apiRequest,fileReader})=>{
 
 })
 
+ // Verify that User A can create an article and access its edit/delete options.
 test("Verify the user A is able to Publish / Edit / Delete the article",async({signIn,home,article,fileReader})=>{
 
     
@@ -57,7 +62,7 @@ test("Verify the user A is able to Publish / Edit / Delete the article",async({s
     await test.step("Create article",async()=>{
 
     await home.clickOnNewArticle()
-    uniqueTitle =  updateValue('TC004_new.title',`${Date.now()}`)    
+    uniqueTitle =  updateUniqueTitle('TC004_new.title',`${Date.now()}`)    
     articleSlug = await article.newArticle(uniqueTitle, data.TC004_new.description, data.TC004_new.body, data.TC004_new.tagList)
     console.log(`The article ${uniqueTitle} is created`,articleSlug);
     
@@ -65,15 +70,17 @@ test("Verify the user A is able to Publish / Edit / Delete the article",async({s
 
     await test.step("Verify 'Edit & Delete' is enabled for User A",async()=>{
     await article.isURLHave(/\/article\/.+/);
+     // Verify that Edit and Delete options are visible to the article owner.
     expect(await article.isEditVisible()).toBeTruthy()
 
     expect(await article.isDeleteVisible()).toBeTruthy()
      })
 })
 
+ // Verify that User B cannot modify or delete User A's article through the UI.
 test("Verify the user B is not able to edit / delete the article from UI",async({signIn,home,article,fileReader})=>{
 
-    
+   
     await test.step("Opening App",async()=>{
         await home.loadApplication()})
 
@@ -89,6 +96,7 @@ test("Verify the user B is not able to edit / delete the article from UI",async(
 
      if(await articleNew.count() > 0){
         console.log("The Article is present in the Global Feed");
+        await expect(articleNew).toHaveCount(1);
         await home.selectArticle(articleNew)
         expect(await article.isEditVisible()).toBeFalsy()
         expect(await article.isDeleteVisible()).toBeFalsy()
@@ -102,7 +110,7 @@ test("Verify the user B is not able to edit / delete the article from UI",async(
     
 })
 
-
+// Verify article ownership restrictions through API requests.
 test("Verify the user is not able to edit or delete another user's article from API",async({apiRequest,fileReader})=>{
 
     const username =   fileReader.readData("users", "apiUsername")
@@ -115,7 +123,7 @@ test("Verify the user is not able to edit or delete another user's article from 
     await test.step("Login to the API as User B",async()=>{
         token = await apiRequest.loginUser(baseURL, email, password)
         if(token === null){
-            const token = await apiRequest.signUpUser(baseURL, email, username, password)
+            token = await apiRequest.signUpUser(baseURL, email, username, password)
         }
     })
 
@@ -125,7 +133,7 @@ test("Verify the user is not able to edit or delete another user's article from 
         console.log("Article Detail: ", getRes)
     })
 
-
+    // Verify that the API returns 403 Forbidden when user attempt to update User A's article using User B's token.
     await test.step("Try to edit the aritcle created by another User  from API",async()=>{
 
         const resBody = await apiRequest.putRequest(table, baseURL, token, articleSlug, data.API_TC01_PUT)
@@ -138,8 +146,10 @@ test("Verify the user is not able to edit or delete another user's article from 
             else{ 
                 throw new Error(`Unexpected status: ${resBody.status()}`);
             }
+        expect(resBody.status()).toBe(403);
     })
-        
+    
+     // Verify that the API returns 403 Forbidden when user attempt to delete User A's article using User B's token.
     await test.step("Try to delete the aritcle created by another User  from API",async()=>{
 
     const resBody1 = await  apiRequest.deleteRequest(table, baseURL, token, articleSlug)
@@ -151,6 +161,7 @@ test("Verify the user is not able to edit or delete another user's article from 
         else{ 
             throw new Error(`Unexpected status: ${resBody1.status()}`);
         }
+    expect(resBody1.status()).toBe(403);
     })
 
 })

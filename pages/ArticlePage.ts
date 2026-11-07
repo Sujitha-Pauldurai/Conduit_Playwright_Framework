@@ -3,13 +3,21 @@ import ElementHandler from "../helper/elementHandler";
 import { PWLocators } from "../locators/playwrightLocators"
 import { articleLocators } from "../locators/articleLocators"
 import { homeLocators } from "../locators/homeLocators";
-import { updateValue } from "../helper/jsonFileHandler";
 
 
 
+/** Page object for creating, editing, and deleting articles, and checking which actions are visible. */
 export class ArticlePage extends ElementHandler{
 
-
+     /**
+     * Fills in the new article form, publishes it, and returns the article's slug.
+     *
+     * @param title - The article title to enter.
+     * @param description - The short description to enter.
+     * @param body - The article body text to enter.
+     * @param tags - Tags to add. Each tag is entered and confirmed with Enter.
+     * @returns The slug of the created article, used in its URL and for API calls.
+     */
     async newArticle(title:string,description:string,body:string,tags:string[]){
 
         
@@ -44,6 +52,13 @@ export class ArticlePage extends ElementHandler{
         
     }
 
+    /**
+     * Opens an existing article, applies the provided changes, and publishes.
+     *
+     * @param oldTitle - The current title of the article, used to find it and check the editor.
+     * @param data - The changes to apply. Omit a field to leave it unchanged. Fields: newTitle, description, body, addTags, removeTags.
+     * @returns Resolves once the updated article's title is visible on the page.
+     */
     async editArticle(oldTitle:string,data:{newTitle?:string;description?:string;body?:string;addTags?:string[];removeTags?:string[]}){
 
 
@@ -81,18 +96,39 @@ export class ArticlePage extends ElementHandler{
       
     }
 
+
+    /**
+     * Opens an article by its title and deletes it, then waits for the home page.
+     *
+     * @param oldTitle - The title of the article to delete.
+     *  Resolves once the home page is visible.
+     */
     async deleteArticle(oldTitle:string){
         let targetElement = await this.findElement(PWLocators.role,PWLocators.roleTypes.heading,oldTitle)
         await expect(targetElement).toBeVisible()
 
-        const editArticle = await this.findElement(PWLocators.role,PWLocators.roleTypes.button,articleLocators.deleteArticle)
-        await editArticle.first().click()
+        const responsePromise = this.page.waitForResponse(res =>
+            res.url().includes('/api/articles') &&
+            res.request().method() === 'DELETE'
+        );
+
+        const deleteArticle = await this.findElement(PWLocators.role,PWLocators.roleTypes.button,articleLocators.deleteArticle)
+        await deleteArticle.first().click()
+
+        const response = await responsePromise;
+        expect(response.status()).toBe(204);
+      
 
         targetElement = await this.findElement(homeLocators.homeDiv)
         await expect(targetElement).toBeVisible()
 
     }
 
+    /**
+     * Checks whether the Edit control is visible on the current article page.
+     *
+     * @returns Whether the Edit link is visible.
+     */
     async isEditVisible(){
         await expect(this.page).toHaveURL(/\/article\/.+/);
         const editButton = (await this.findElement(PWLocators.role,PWLocators.roleTypes.link,articleLocators.editArticle))
@@ -101,6 +137,11 @@ export class ArticlePage extends ElementHandler{
 
     }
 
+    /**
+     * Checks whether the Delete control is visible on the current article page.
+     *
+     * @returns Whether the Delete button is visible.
+     */
     async isDeleteVisible(){
         await expect(this.page).toHaveURL(/\/article\/.+/);
         const deleteButton = await this.findElement(PWLocators.role,PWLocators.roleTypes.button,articleLocators.deleteArticle)
@@ -108,12 +149,42 @@ export class ArticlePage extends ElementHandler{
 
     }
 
+    async returnArticleHeading(){
+        await expect(this.page).toHaveURL(/\/article\/.+/);
+        const deleteButton = await this.findElement(articleLocators.heading)
+        return deleteButton
+    }
 
-    
+    // Intercept Global Feed request
+   async increaseArticleLimit() {
+    await this.page.route(/\/api\/articles\?.*/, async (route) => {
+        const url = new URL(route.request().url());
+        url.searchParams.set('limit', '100');
+        url.searchParams.set('offset', '30');
 
-    
+        const response = await route.fetch({
+            url: url.toString()
+        });
 
+        const body = await response.text()
+        const bodyText = JSON.parse(body);
+
+
+       console.log("Response body:", bodyText);
+       /*  console.log(
+            "Target article found:",
+            body.articles.some((a: any) =>
+                a.title.includes("Future of AI in Software Testing")
+            )
+        ); */
+
+        await route.fulfill({ response });
+    });
 }
+}
+    
+    
+
 
     
 
