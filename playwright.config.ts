@@ -30,9 +30,7 @@ export default defineConfig({
      baseURL: 'https://conduit.bondaracademy.com',
 
      /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-     launchOptions: {
-    args: ['--start-maximized'],
-  },
+    
     viewport: null,
     trace: 'retain-on-failure',
     screenshot:'only-on-failure',
