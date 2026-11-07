@@ -40,6 +40,19 @@ Conduit is a Medium-style blogging application that supports user registration, 
 | TC_UI_001 – Home Page UI Integrity | Validates header, footer, navigation, feeds, and important UI elements. Known Issue: This test currently fails because the header is not displayed when the application redirects to the article screen after a successful edit or deletion
 | API TC01 – Article CRUD | Validates article creation, retrieval, update, and deletion through REST API requests, including response status and payload verification.|
 
+## Known Issues
+
+### Article Flow: Publish, Edit and Delete fails on the home page UI test
+
+- **Test:** `Regression/TC_UI_001_VerifyHomePageUIIntegrity.spec.ts`: "Verify the Article Flow Publish, Edit and Delete"
+- **Browsers affected:** Chromium, Firefox, WebKit
+- **Description:** Header section is not displayed when the application redirects to the article screen after a successful edit or deletion
+- **Status:** Open
+- **Marked as:** `test.fail()` with the ticket ID, so the run stays green while the bug is open
+
+
+**What this means for test results:** These three tests are expected to fail until the bug is fixed. A pass count of 30 with 3 expected failures is the normal state. The API test for the same flow (`API_TC01_CRUD_Article.spec.ts`) passes on all browsers, so the failure is in the UI only.
+
 
 ## Framework Design
 

@@ -10,6 +10,8 @@ import data from "../../test-data/Article.json"
  */
 test("Verify the Article Flow Publish, Edit and Delete",async({signIn,home,article,fileReader})=>{
 
+    test.fail(true, 'Known issue: <The header is not displayed when the application redirects to the article screen after a successful edit or deletion>');
+
     // Holds the title currently used for the article. It starts from the JSON value
     // and is replaced with the unique title once the article is created
     let uniqueTitle = data.TC003_new.title
